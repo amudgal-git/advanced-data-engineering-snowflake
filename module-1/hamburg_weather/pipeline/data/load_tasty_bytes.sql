@@ -64,7 +64,8 @@ CREATE TABLE {{env}}_tasty_bytes.raw_pos.country
    iso_currency VARCHAR(3),
    iso_country VARCHAR(2),
    city VARCHAR(16777216),
-   city_population VARCHAR(16777216)
+   city_population VARCHAR(16777216),
+   city_id NUMBER(19,0)
 );
 
 
@@ -293,17 +294,8 @@ USE WAREHOUSE demo_build_wh;
 
 
 -- country table load
--- COPY INTO {{env}}_tasty_bytes.raw_pos.country
--- (
---    country_id,
---    country,
---    iso_currency,
---    iso_country,
---    city_id,
---    city,
---    city_population
--- )
--- FROM @{{env}}_tasty_bytes.public.s3load/raw_pos/country/;
+COPY INTO {{env}}_tasty_bytes.raw_pos.country
+FROM @{{env}}_tasty_bytes.public.s3load/raw_pos/country/;
 
 
 -- franchise table load
@@ -330,7 +322,7 @@ FROM @{{env}}_tasty_bytes.public.s3load/raw_pos/truck/;
 COPY INTO {{env}}_tasty_bytes.raw_customer.customer_loyalty
 FROM @{{env}}_tasty_bytes.public.s3load/raw_customer/customer_loyalty/;
 
-
+-- redo
 -- order_header table load
 COPY INTO {{env}}_tasty_bytes.raw_pos.order_header
 FROM @{{env}}_tasty_bytes.public.s3load/raw_pos/subset_order_header/;
