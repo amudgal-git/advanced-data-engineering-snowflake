@@ -4,6 +4,6 @@ default_connection_name = "advanced_data_engineering_snowflake"
 
 [connections]
 [connections.advanced_data_engineering_snowflake]
-account=""
-user=""
-password=""
+account = "HZJHGIE-HHB21809"
+user = "ALEXADMIN"
+password = "Metallega.2025"
