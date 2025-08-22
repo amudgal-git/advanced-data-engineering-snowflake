@@ -57,14 +57,15 @@ raw zone table build
 -- country table build
 
 -- todo: complete table build
-CREATE TABLE {{env}}_tasty_bytes.raw_pos.country
+CREATE OR ALTER TABLE {{env}}_tasty_bytes.raw_pos.country
 (
    country_id NUMBER(18,0),
    country VARCHAR(16777216),
    iso_currency VARCHAR(3),
    iso_country VARCHAR(2),
    city VARCHAR(16777216),
-   city_population VARCHAR(16777216)
+   city_population VARCHAR(16777216),
+   city_id number (19,0)
 );
 
 
@@ -279,7 +280,7 @@ SELECT DATE(o.order_ts) AS date, * FROM {{env}}_tasty_bytes.harmonized.orders_v 
 
 -- customer_loyalty_metrics_v view
 CREATE OR REPLACE VIEW {{env}}_tasty_bytes.analytics.customer_loyalty_metrics_v
-COMMENT = 'Tasty Bytes Customer Loyalty Member Metrics View'
+COMMENT = 'Tasty Bytes Customer Loyalty Member Metrics Viewww'
    AS
 SELECT * FROM {{env}}_tasty_bytes.harmonized.customer_loyalty_metrics_v;
 
@@ -291,22 +292,12 @@ raw zone table load
 
 USE WAREHOUSE demo_build_wh;
 
-
 -- country table load
--- COPY INTO {{env}}_tasty_bytes.raw_pos.country
--- (
---    country_id,
---    country,
---    iso_currency,
---    iso_country,
---    city_id,
---    city,
---    city_population
--- )
--- FROM @{{env}}_tasty_bytes.public.s3load/raw_pos/country/;
+ COPY INTO {{env}}_tasty_bytes.raw_pos.country
+ FROM @{{env}}_tasty_bytes.public.s3load/raw_pos/country/;
 
 
--- franchise table load
+-- franchise table load aaa
 COPY INTO {{env}}_tasty_bytes.raw_pos.franchise
 FROM @{{env}}_tasty_bytes.public.s3load/raw_pos/franchise/;
 
