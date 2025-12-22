@@ -3,9 +3,9 @@
 default_connection_name = "advanced_data_engineering_snowflake"
 
 [connections.advanced_data_engineering_snowflake]
-account="QKIZIOV-ZH43284"
-user="hdrJGrade"
-password="5n0wfl@k#-D4T4"
+account=""
+user=""
+password=""
 warehouse="COMPUTE_WH"
 database="LOAD_DATA"
 schema="PUBLIC"
