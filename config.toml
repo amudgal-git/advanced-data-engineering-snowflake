@@ -2,8 +2,11 @@
 
 default_connection_name = "advanced_data_engineering_snowflake"
 
-[connections]
 [connections.advanced_data_engineering_snowflake]
 account=""
 user=""
 password=""
+warehouse="COMPUTE_WH"
+database="LOAD_DATA"
+schema="PUBLIC"
+role="ACCOUNTADMIN"
