@@ -15,6 +15,9 @@ CREATE OR REPLACE API INTEGRATION
   ALLOWED_AUTHENTICATION_SECRETS = ()
   ENABLED = TRUE;
 
+
+
+
 -- Create the git repository object
 CREATE OR REPLACE GIT REPOSITORY course_repo.public.advanced_data_engineering_snowflake
   API_INTEGRATION =  -- Name of the API integration defined above
