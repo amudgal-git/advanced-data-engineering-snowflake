@@ -15,7 +15,7 @@ CREATE OR REPLACE API INTEGRATION
   ALLOWED_AUTHENTICATION_SECRETS = ()
   ENABLED = TRUE;
 
-
+--Adding comment for compare and pull to the main branch
 
 
 -- Create the git repository object
