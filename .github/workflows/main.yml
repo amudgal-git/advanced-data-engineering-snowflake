@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # Read connection secret
+      # Read connection secret (verify these secret names in repository settings)
       SNOWFLAKE_CONNECTIONS_ADVANCED_DATA_ENGINEERING_SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
       SNOWFLAKE_CONNECTIONS_ADVANCED_DATA_ENGINEERING_SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
       SNOWFLAKE_CONNECTIONS_ADVANCED_DATA_ENGINEERING_SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
@@ -27,18 +27,26 @@ jobs:
       # Checkout step is necessary to access repository files
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # Determine environment based on target branch
       - name: Set environment
         id: set_env
+        shell: bash
         run: |
+          # For push: GITHUB_REF is refs/heads/<branch>
+          # For PR events: GITHUB_BASE_REF contains the target branch (staging/main)
           TARGET_BRANCH="${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}"
-          
-          if [[ $TARGET_BRANCH == "staging" ]]; then
+          echo "Determined target branch: $TARGET_BRANCH"
+
+          if [[ "$TARGET_BRANCH" == "staging" ]]; then
             echo "DEPLOY_ENV=staging" >> $GITHUB_ENV
+            echo "REF_NAME=staging" >> $GITHUB_ENV
             echo "Environment set to staging"
-          elif [[ $TARGET_BRANCH == "main" ]]; then
+          elif [[ "$TARGET_BRANCH" == "main" ]]; then
             echo "DEPLOY_ENV=prod" >> $GITHUB_ENV
+            echo "REF_NAME=main" >> $GITHUB_ENV
             echo "Environment set to production"
           else
             echo "Unexpected branch: $TARGET_BRANCH"
@@ -54,14 +62,18 @@ jobs:
 
       # Fetch latest changes from the repository to Snowflake
       - name: Fetch latest changes to Snowflake
-        run: snow git fetch course_repo.public.advanced_data_engineering_snowflake
-
-      # Deploy templates to the data environment -
-      - name: Deploy templates to data environment
+        shell: bash
         run: |
-          # Export TARGET_BRANCH for use in this step
-          echo "Using branch: ${GITHUB_REF_NAME}"
-          snow git execute @advanced_data_engineering_snowflake/branches/${GITHUB_REF_NAME}/module-1/hamburg_weather/pipeline/data/ \
-          -D "env='${{ env.DEPLOY_ENV }}'" \
-          --database=COURSE_REPO \
-          --schema=PUBLIC
+          # ensure snow is on PATH by the action and run fetch
+          snow git fetch course_repo.public.advanced_data_engineering_snowflake
+
+      # Deploy templates to the data environment
+      - name: Deploy templates to data environment
+        shell: bash
+        run: |
+          # REF_NAME and DEPLOY_ENV were exported to GITHUB_ENV in the Set environment step
+          echo "Using branch: ${REF_NAME}"
+          snow git execute @advanced_data_engineering_snowflake/branches/${REF_NAME}/module-1/hamburg_weather/pipeline/data \
+            -D "env='${DEPLOY_ENV}'" \
+            --database=COURSE_REPO \
+            --schema=PUBLIC
